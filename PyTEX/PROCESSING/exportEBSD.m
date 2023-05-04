@@ -18,7 +18,7 @@ function exportEBSD(OUTPUT, thinSection, phase, ebsd, grod, kam)
 %             
 %         end
 
-        name = strcat(OUTPUT, thinSection, '_', phase, '_EBSD.txt');
+        name = strcat(OUTPUT, thinSection, '_', phase, '_EBSD.csv');
         name = char(name);
 
         header = {'id', 'x', 'y', 'grain', 'grod', 'kam'};

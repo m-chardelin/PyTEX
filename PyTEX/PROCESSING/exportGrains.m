@@ -1,6 +1,6 @@
 function exportGrains(OUTPUT, thinSection, phase, grains)
 
-        name = strcat(OUTPUT, thinSection, '_', phase, '_Grains.txt');
+        name = strcat(OUTPUT, thinSection, '_', phase, '_Grains.csv');
         name = char(name);
 
 

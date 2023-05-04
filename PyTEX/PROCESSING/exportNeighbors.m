@@ -1,6 +1,6 @@
 function exportNeighbors(OUTPUT, thinSection, grains)
 
-        name = strcat(OUTPUT, thinSection, '_', 'Neighbors.txt');
+        name = strcat(OUTPUT, thinSection, '_', 'Neighbors.csv');
         name = char(name);
 
         header = {'grain1', 'grain2'};

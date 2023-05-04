@@ -10,7 +10,7 @@ function mapOrientations(OUTPUT, thinSection, phase, ebsd, grains, grainsall, co
             plotIPDF(grains.meanOrientation,  xvector, 'MarkerColor', color, 'MarkerSize', size)
             hold off 
             
-            task = strcat(phase, "_ipf");
+            task = "IPF";
             saveMAP(OUTPUT, thinSection, phase, task);
 
 

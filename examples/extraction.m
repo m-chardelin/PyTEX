@@ -23,7 +23,7 @@
     clc
     
     % plotting preferences
-    %startup_mtex
+    startup_mtex
     set(groot,'defaultFigureVisible','off')
     setMTEXpref('xAxisDirection','east');
     setMTEXpref('zAxisDirection','outOfPlane');
@@ -40,8 +40,8 @@
 
 
     %% precise working directories
-    MAIN_FOLDER = '/Users/marialinechardelin/scripts/PyTEX/examples';
-    DATA = '/Users/marialinechardelin/scripts/PyTEX/examples/dataClean/';
+    MAIN_FOLDER = '/home/desktop/current/EBSD';
+    DATA = '/home/desktop/current/EBSD/dataClean/';
     INPUT = '';
     OUTPUT = '';
 
@@ -106,25 +106,24 @@ for i = 1:length(thinSectionsList)
             %% export small table with mean values of grains parameters
             exportParam(OUTPUT, thinSection, phase, 'all', mineralGrains, meanGROD, meanKAM)
            
-%             %% map orientation
-%             tf = strcmp(phase,'Amphibole');
-%             if tf == false
-%                 mapOrientations(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, SG, 'black', 0.8)
-%             end
-% 
-%             %% ODF and CPO
-%             [odf, value, ori, Jindex] = ODFjIndex(mineralEBSD);
-% 
-%             if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene')) || (contains(phase, 'Spinelle')) || (contains(phase, 'Amphibole')) || (contains(phase, 'Plagioclase'))
-%                 [phasePFs, CS] = selectPFs(mineralEBSD, phase);
-%                 CPO(mineralGrains, odf, phasePFs, phase, OUTPUT, thinSection, 'all', mineralCS, mineralColor, pfXY)    
-%             end
-%             
-%             %% export indexes for the relevant minerals 
-%             if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene'))
-%                 [BA, BC, AC] = indexMineral(mineralGrains, phasePFs);
-%                 exportIndex(OUTPUT, thinSection, phase, 'all', Jindex, BA, BC, AC, mineralGrains.length)
-%             end
+            %% map orientation
+            tf = strcmp(phase,'Amphibole');
+            if tf == false
+                mapOrientations(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, SG, 'black', 0.8)
+            end
+
+            %% ODF and CPO
+            [odf, value, ori, Jindex] = ODFjIndex(mineralEBSD);
+
+            [phasePFs, CS] = selectPFs(mineralEBSD, phase);
+            CPO(mineralGrains, odf, phasePFs, phase, OUTPUT, thinSection, 'all', mineralCS, mineralColor, pfXY)    
+
+
+            %% export indexes for the relevant minerals 
+            if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene'))
+                [BA, BC, AC] = indexMineral(mineralGrains, phasePFs);
+                exportIndex(OUTPUT, thinSection, phase, 'all', Jindex, BA, BC, AC, mineralGrains.length)
+            end
 
 
         end

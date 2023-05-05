@@ -23,7 +23,7 @@
     clc
     
     % plotting preferences
-    %startup_mtex
+    startup_mtex
     set(groot,'defaultFigureVisible','off')
     setMTEXpref('xAxisDirection','east');
     setMTEXpref('zAxisDirection','outOfPlane');
@@ -40,10 +40,10 @@
 
 
     %% precise working directories
-    MAIN_FOLDER = '/Users/marialinechardelin/scripts/PyTEX/examples';
-    DATA = '/Users/marialinechardelin/scripts/PyTEX/data/';
+    MAIN_FOLDER = '/home/desktop/current/EBSD';
+    DATA = '/home/desktop/current/EBSD/data/';
     INPUT = '';
-    OUTPUT = '/Users/marialinechardelin/scripts/PyTEX/examples/dataClean/';
+    OUTPUT = '/home/desktop/current/EBSD/dataClean/';
 
     %% create output folders and output files 
     [INPUT, DATA, OUTPUT, thinSectionsList, thinSectionsFiles, thinSectionsData] = createOutputDir(MAIN_FOLDER, nbThinSections, DATA, INPUT, OUTPUT, formatClean, inputName);

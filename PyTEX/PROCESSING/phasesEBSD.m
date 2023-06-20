@@ -1,6 +1,6 @@
 function phasesEBSD(OUTPUT, thinSection, ebsd, phaseList)
 
-        [phases]=fopen(strcat(OUTPUT, 'phasesEBSD.txt'), 'a+');
+        [phases]=fopen(strcat(OUTPUT, 'phasesEBSD.csv'), 'a+');
 
         listMineral = '';
         listPhase = '';

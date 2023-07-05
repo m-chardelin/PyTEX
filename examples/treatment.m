@@ -40,10 +40,10 @@
 
 
     %% precise working directories
-    MAIN_FOLDER = '/home/desktop/current/EBSD';
-    DATA = '/home/desktop/current/EBSD/data/';
+    MAIN_FOLDER = 'C:/Users/timothee.arnaud/Desktop/EBSD';
+    DATA = 'C:/Users/timothee.arnaud/Desktop/EBSD/data/';
     INPUT = '';
-    OUTPUT = '/home/desktop/current/EBSD/dataClean/';
+    OUTPUT = 'C:/Users/timothee.arnaud/Desktop/EBSD/dataClean/';
 
     %% create output folders and output files 
     [INPUT, DATA, OUTPUT, thinSectionsList, thinSectionsFiles, thinSectionsData] = createOutputDir(MAIN_FOLDER, nbThinSections, DATA, INPUT, OUTPUT, formatClean, inputName);
@@ -58,15 +58,20 @@ for i = 1:length(thinSectionsList)
         %% loading ctf file
         [ebsd, TXTfile, DATAfile] = loadVarFiles(i, thinSectionsFiles, thinSectionsData, formatClean, transformationClean);
         
-        exportFormat(ebsd, OUTPUT, thinSection, 'ctf', 'r')
+        %ebsd = sliceEBSD(ebsd, 7)
+        exportFormat(ebsd, OUTPUT, thinSection, 'ctf', '-r')
 
         %%  putting the right colors for maps, checking phases names
         [ebsd, phaseList] = mineralColors(ebsd);
         phasesEBSD(OUTPUT, thinSection, ebsd, phaseList);
+
+        %plot(ebsd)
+        %task = 'EBSD'
+        %saveMAP(OUTPUT, thinSection, '', task);
     
         %% cleaning data, calculating grains and subgrains boundaries with no stair effect
         ebsd = dataCleaning(ebsd, madSeuil, segAngle, smallGrainsOption);
-        exportFormat(ebsd, OUTPUT, thinSection, 'ctf', 'c')
+        exportFormat(ebsd, OUTPUT, thinSection, 'ctf', '-c')
 
     catch
         filesError(OUTPUT, thinSection)

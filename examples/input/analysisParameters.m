@@ -11,13 +11,13 @@ iter = 2;
 
 transformationClean = ''
 transformationExtraction = 'convertSpatial2EulerReferenceFrame'
-formatClean = 'crc';
+formatClean = 'ctf';
 formatExtraction = 'ctf';
 
 inputName = 'inputThinSections'
 inputNameExtract = 'inputThinSectionsExtract'
 
-nbThinSections = 48;
-nbThinSectionsExtract = 48;
+nbThinSections = 59;
+nbThinSectionsExtract = 59;
 
 lim = [0, segAngle];

@@ -27,7 +27,7 @@
     set(groot,'defaultFigureVisible','off')
     setMTEXpref('xAxisDirection','east');
     setMTEXpref('zAxisDirection','outOfPlane');
-    setMTEXpref('FontSize',18);
+    setMTEXpref('FontSize',12);
     setMTEXpref('FontName', 'serif');
     
     % Default MTEX colormap - jet colormap begin with white
@@ -40,8 +40,8 @@
 
 
     %% precise working directories
-    MAIN_FOLDER = '/home/desktop/current/EBSD';
-    DATA = '/home/desktop/current/EBSD/dataClean/';
+    MAIN_FOLDER = 'C:/Users/timothee.arnaud/Desktop/EBSD';
+    DATA = 'C:/Users/timothee.arnaud/Desktop/EBSD/dataClean/';
     INPUT = '';
     OUTPUT = '';
 
@@ -66,7 +66,7 @@ for i = 1:length(thinSectionsList)
     [ebsd, grains, ES, SG] = grainDetection(ebsd, segAngle, subSegAngle, smallGrainsOption, nonIndexedOption, iter);
     
     %%
-    %createMap(OUTPUT, thinSection, 'all', ebsd, grains, 0.1, 'black')
+    createMap(OUTPUT, thinSection, 'all', ebsd, grains, 0.1, 'black')
 
     %% export grain boundaries coordinates
     exportBoundaries(OUTPUT, thinSection, grains)
@@ -87,10 +87,15 @@ for i = 1:length(thinSectionsList)
         phase = string(phaseList(j));
         
         %% flag for non indexed grains
-        tf = strcmp(phase,'notIndexed');
 
+        if (length(mineralEBSD) > 0) && (string(mineral) == 'notIndexed')   
+            exportGrains(OUTPUT, thinSection, phase, mineralGrains);
+            exportEBSD(OUTPUT, thinSection, phase, mineralEBSD, 0, 0)
+        end
+     
         %% ignore non indexed phase
-        if (length(mineralEBSD) > 100) && (tf == false)      
+        if (length(mineralEBSD) > 0) && (string(mineral) ~= 'notIndexed')      
+
 
             %% make a color scale for mineral
             [mineralCS, mineralColor] = mineralColorScale(phase);
@@ -98,33 +103,68 @@ for i = 1:length(thinSectionsList)
             %% calculate GROD and KAM, exporting in a map
             [maxGROD, meanGROD, grod] = mapGROD(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, grains, 0.01, 'black', corange, lim);
             [maxKAM, meanKAM, kam] = mapKAM(OUTPUT, thinSection, phase, mineralEBSD, grains, 0.01, 'black', cpurple, lim);
-            
+
             %% export grains and ebsd tables for each mineral for Python data treatment
             exportGrains(OUTPUT, thinSection, phase, mineralGrains);
             exportEBSD(OUTPUT, thinSection, phase, mineralEBSD, grod, kam)
 
+            mineralGrainsSmall = mineralGrains(mineralGrains.grainSize > 3);
+            mineralEBSDSmall = mineralEBSD(mineralGrainsSmall);
+
             %% export small table with mean values of grains parameters
             exportParam(OUTPUT, thinSection, phase, 'all', mineralGrains, meanGROD, meanKAM)
-           
+
             %% map orientation
-            tf = strcmp(phase,'Amphibole');
-            if tf == false
-                mapOrientations(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, SG, 'black', 0.8)
-            end
+            % tf = strcmp(phase,'Amphibole');
+            % if tf == false
+            %     mapOrientations(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, SG, 'black', 0.8)
+            % end
+
 
             %% ODF and CPO
-            [odf, value, ori, Jindex] = ODFjIndex(mineralEBSD);
-
-            [phasePFs, CS] = selectPFs(mineralEBSD, phase);
-            CPO(mineralGrains, odf, phasePFs, phase, OUTPUT, thinSection, 'all', mineralCS, mineralColor, pfXY)    
+            [odf, value, ori, Jindex] = ODFjIndex(mineralEBSDSmall);
+            [phasePFs, CS] = selectPFs(mineralEBSDSmall, phase);
+            CPO(mineralGrainsSmall, odf, phasePFs, phase, OUTPUT, thinSection, 'all', mineralCS, mineralColor, pfXY)    
 
 
             %% export indexes for the relevant minerals 
             if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene'))
-                [BA, BC, AC] = indexMineral(mineralGrains, phasePFs);
-                exportIndex(OUTPUT, thinSection, phase, 'all', Jindex, BA, BC, AC, mineralGrains.length)
+                 [BA, BC, AC] = indexMineral(mineralGrainsSmall, phasePFs);
+                 exportIndex(OUTPUT, thinSection, phase, 'all', Jindex, BA, BC, AC, mineralGrainsSmall.length);
             end
 
+
+            %% ODF and CPO
+            neo = mineralGrains(mineralGrains.GOS./degree < 1);
+            neo = neo(neo.equivalentRadius*2 < 400);
+            neo = neo(neo.grainSize > 3);
+            neoebsd = mineralEBSD(neo);
+            [odfNeo, value, ori, Jindex] = ODFjIndex(neoebsd);
+            [phasePFs, CS] = selectPFs(neoebsd, phase);
+            CPO(neo, odfNeo, phasePFs, phase, OUTPUT, thinSection, 'neo', mineralCS, mineralColor, pfXY)    
+            % export indexes for the relevant minerals 
+            if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene'))
+                 [BA, BC, AC] = indexMineral(neo, phasePFs);
+                 exportIndex(OUTPUT, thinSection, phase, 'neo', Jindex, BA, BC, AC, neo.length);
+            end
+
+            %% ODF and CPO
+            p = mineralGrains(mineralGrains.GOS./degree > 1) ;
+            n = mineralGrains(mineralGrains.GOS./degree < 1 & mineralGrains.equivalentRadius*2 > 400);
+            porph = [p, n];
+            porph = porph(porph.grainSize > 3);
+            porphEBSD = mineralEBSD(porph);
+            [odfPorph, value, ori, Jindex] = ODFjIndex(porphEBSD);
+            [phasePFs, CS] = selectPFs(porphEBSD, phase);
+            CPO(porph, odfPorph, phasePFs, phase, OUTPUT, thinSection, 'porph', mineralCS, mineralColor, pfXY)    
+            % export indexes for the relevant minerals 
+            if (contains(phase, 'Olivine')) || (contains(phase, 'Orthopyroxene')) || (contains(phase, 'Clinopyroxene'))
+                 [BA, BC, AC] = indexMineral(porph, phasePFs);
+                 exportIndex(OUTPUT, thinSection, phase, 'porph', Jindex, BA, BC, AC, porph.length);
+            end
+
+            %%
+            CPOcombined(porph, neo, odfNeo, phasePFs, phase, OUTPUT, thinSection, 'combined', mineralCS, mineralColor, pfXY) 
 
         end
 

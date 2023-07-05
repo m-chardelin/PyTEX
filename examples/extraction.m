@@ -40,8 +40,8 @@
 
 
     %% precise working directories
-    MAIN_FOLDER = 'C:/Users/timothee.arnaud/Desktop/EBSD';
-    DATA = 'C:/Users/timothee.arnaud/Desktop/EBSD/dataClean/';
+    MAIN_FOLDER = '/home/desktop/current/EBSD';
+    DATA = '/home/desktop/current/EBSD/dataClean/';
     INPUT = '';
     OUTPUT = '';
 
@@ -70,7 +70,9 @@ for i = 1:length(thinSectionsList)
 
     %% export grain boundaries coordinates
     exportBoundaries(OUTPUT, thinSection, grains)
-    exportNeighbors(OUTPUT, thinSection, grains)
+
+    [ebsdN, grainsN, ESN, SGN] = grainDetection(ebsd, segAngle, subSegAngle, smallGrainsOption, 1, iter);
+    exportNeighbors(OUTPUT, thinSection, grainsN)
     %%
     exportArea(OUTPUT, ebsd, grains, SG, thinSection, phaseList)
 

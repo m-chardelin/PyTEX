@@ -2,19 +2,19 @@ function [INPUT, DATA, OUTPUT, thinSectionsList, thinSectionsFiles, thinSections
     
         %%
         if strcmp(data, '')
-            DATA=strcat(MAIN_FOLDER, '/DATA/');
+            DATA=strcat(MAIN_FOLDER, '/data/');
         else
             DATA=data;
         end
 
         if strcmp(input, '')
-            INPUT=strcat(MAIN_FOLDER, '/INPUT/');
+            INPUT=strcat(MAIN_FOLDER, '/input/');
         else
             INPUT=input;
         end
         
         if strcmp(output, '')
-            OUTPUT=strcat(MAIN_FOLDER, '/OUTPUT/total/');
+            OUTPUT=strcat(MAIN_FOLDER, '/output/total/');
         else 
             OUTPUT=output;
         end

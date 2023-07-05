@@ -16,5 +16,9 @@ function exportNeighbors(OUTPUT, thinSection, grains)
         data = [gr.grainId, gr.ebsdId, gr.segLength, gr.isIndexed, gr.misrotation.i, gr.misrotation.phi1, gr.misrotation.Phi, gr.misrotation.phi2, gr.misrotation.a, gr.misrotation.b, gr.misrotation.c, gr.misrotation.d];
         
         csvwrite_with_headers(name,data,header);
+
+        plot(grains)
+        task = 'grainsNeighbors'
+        saveMAP(OUTPUT, thinSection, '', task);
         
 end

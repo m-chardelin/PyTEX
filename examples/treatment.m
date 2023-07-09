@@ -58,16 +58,16 @@ for i = 1:length(thinSectionsList)
         %% loading ctf file
         [ebsd, TXTfile, DATAfile] = loadVarFiles(i, thinSectionsFiles, thinSectionsData, formatClean, transformationClean);
         
-        ebsd = sliceEBSD(ebsd, 15)
+        %ebsd = sliceEBSD(ebsd, 15)
         exportFormat(ebsd, OUTPUT, thinSection, 'ctf', '-r')
 
         %%  putting the right colors for maps, checking phases names
         [ebsd, phaseList] = mineralColors(ebsd);
         phasesEBSD(OUTPUT, thinSection, ebsd, phaseList);
 
-        plot(ebsd)
-        task = 'EBSD'
-        saveMAP(OUTPUT, thinSection, '', task);
+        %plot(ebsd)
+        %task = 'EBSD'
+        %saveMAP(OUTPUT, thinSection, '', task);
     
         %% cleaning data, calculating grains and subgrains boundaries with no stair effect
         ebsd = dataCleaning(ebsd, madSeuil, segAngle, smallGrainsOption);

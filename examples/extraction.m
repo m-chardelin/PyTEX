@@ -65,6 +65,7 @@ for i = 1:length(thinSectionsList)
     %% grain reconstruction
     [ebsd, grains, ES, SG] = grainDetection(ebsd, segAngle, subSegAngle, smallGrainsOption, nonIndexedOption, iter);
     
+
     %%
     createMap(OUTPUT, thinSection, 'all', ebsd, grains, 0.1, 'black')
 
@@ -74,8 +75,14 @@ for i = 1:length(thinSectionsList)
     [ebsdN, grainsN, ESN, SGN] = grainDetection(ebsd, segAngle, subSegAngle, smallGrainsOption, 1, iter);
     exportNeighbors(OUTPUT, thinSection, grainsN)
     %%
+    %meshGrains(OUTPUT, thinSection, grainsN, ebsdN)
+
+    %% Area export
     exportArea(OUTPUT, ebsd, grains, SG, thinSection, phaseList)
 
+    ebsdAligned = rotationAligned(ebsd)
+    [ebsdAligned, grainsAligned, ESAligned, SGAligned] = grainDetection(ebsdAligned, segAngle, subSegAngle, smallGrainsOption, nonIndexedOption, iter);
+    
 %% *************************************MINERAL ITERATION**************************************
 
     for j= 1:length(ebsd.mineralList)
@@ -122,8 +129,7 @@ for i = 1:length(thinSectionsList)
             %     mapOrientations(OUTPUT, thinSection, phase, mineralEBSD, mineralGrains, SG, 'black', 0.8)
             % end
 
-
-            %% ODF and CPO
+                        %% ODF and CPO
             [odf, value, ori, Jindex] = ODFjIndex(mineralEBSDSmall);
             [phasePFs, CS] = selectPFs(mineralEBSDSmall, phase);
             CPO(mineralGrainsSmall, odf, phasePFs, phase, OUTPUT, thinSection, 'all', mineralCS, mineralColor, pfXY)    
@@ -167,6 +173,33 @@ for i = 1:length(thinSectionsList)
 
             %%
             CPOcombined(porph, neo, odfNeo, phasePFs, phase, OUTPUT, thinSection, 'combined', mineralCS, mineralColor, pfXY) 
+
+            %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            %% ODF and CPO
+
+            mineralEBSDAligned = ebsdAligned(mineral);
+            mineralGrainsAligned = SGAligned(mineral)
+
+            neo = mineralGrainsAligned(mineralGrainsAligned.GOS./degree < 1);
+            neo = neo(neo.equivalentRadius*2 < 400);
+            neo = neo(neo.grainSize > 3);
+            neoebsd =mineralEBSDAligned(neo);
+            [odfNeo, value, ori, Jindex] = ODFjIndex(neoebsd);
+            [phasePFs, CS] = selectPFs(neoebsd, phase);
+            CPO(neo, odfNeo, phasePFs, phase, OUTPUT, thinSection, 'neoAligned', mineralCS, mineralColor, pfXY)    
+            
+            p = mineralGrainsAligned(mineralGrainsAligned.GOS./degree > 1) ;
+            n = mineralGrainsAligned(mineralGrainsAligned.GOS./degree < 1 & mineralGrainsAligned.equivalentRadius*2 > 400);
+            porph = [p, n];
+            porph = porph(porph.grainSize > 3);
+            porphEBSD = mineralEBSDAligned(porph);
+            [odfPorph, value, ori, Jindex] = ODFjIndex(porphEBSD);
+            [phasePFs, CS] = selectPFs(porphEBSD, phase);
+            CPO(porph, odfPorph, phasePFs, phase, OUTPUT, thinSection, 'porphAligned', mineralCS, mineralColor, pfXY)    
+
+
+            CPOcombined(porph, neo, odfNeo, phasePFs, phase, OUTPUT, thinSection, 'combinedAligned', mineralCS, mineralColor, pfXY)
 
         end
 
